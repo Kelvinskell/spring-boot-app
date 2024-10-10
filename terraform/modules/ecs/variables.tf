@@ -29,3 +29,17 @@ variable "region" {
 variable "image_name" {
   type = string
 }
+
+variable "mysql_username" {
+  type = string
+  sensitive = true
+}
+
+variable "mysql_password" {
+  type = string
+  sensitive = true
+}
+
+variable "mysql_endpoint" {
+ type = string 
+}

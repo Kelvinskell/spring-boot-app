@@ -25,6 +25,11 @@ resource "aws_ecs_task_definition" "ecs_task" {
           "appProtocol" : "http"
         }
       ],
+      environment          = [
+      { "name" : "DB_USERNAME", "value" : var.mysql_username },
+      { "name" : "DB_PASSWORD", "value" : var.mysql_password },
+      { "name" : "DB_URL", "value" : var.mysql_endpoint }
+    ],
       "essential" : true,
       "environmentFiles" : [],
       "mountPoints" : [],
