@@ -1,4 +1,5 @@
 terraform {
+  # Change this to your own remote backend or just use a local backend.
   backend "s3" {
     bucket         = "bh-spring-boot-app-infra"
     key            = "terraform.tfstate"
