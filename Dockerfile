@@ -1,6 +1,4 @@
-# Dockerfile.backend
-
-# Use an official Maven image with OpenJDK for building
+# First stage
 FROM maven:3.8.5-openjdk-17-slim AS build
 
 # Set the working directory in the container
@@ -9,22 +7,25 @@ WORKDIR /app
 # Copy the pom.xml and download dependencies
 COPY pom.xml .
 
-# Download all dependencies. Dependencies will be cached if the pom.xml is not changed
+# Download all dependencies.
 RUN mvn dependency:go-offline
 
 # Copy the source code into the container
 COPY . ./
 
-# Install Node.js and npm using apk
+# Install Node.js and npm for building the frontend 
 RUN apt-get update && apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g npm@6.14.13  # Install the desired npm version
 
-# Package the application
+# Run frontend build
+RUN cd src/main/resources/static && npm install && npm run build
+
+# Package the Spring Boot application
 RUN mvn package -DskipTests
 
-# Second stage for running the application
+# Second stage (Using a lightweight image)
 FROM openjdk:17-jdk-alpine
 
 # Set the working directory
