@@ -16,6 +16,8 @@ resource "aws_secretsmanager_secret_version" "rds_secret_version" {
     username = var.db_username
     password = var.db_password
   })
+
+  depends_on = [ aws_secretsmanager_secret.rds_secret ]
 }
 
 # Fetch the secret values from Secrets Manager
