@@ -26,6 +26,19 @@ module "security_groups" {
   vpc_id = module.vpc.vpc_id
 }
 
+module "ecs" {
+  source = "./modules/ecs"
+
+  azs = ["${var.region}a", "${var.region}b"]
+  tg_arn = module.alb.tg_arn
+  private_subnets = flatten([module.vpc.private_subnets[*]])
+  ecs_sg = module.security_groups.ECS-sg_id
+  app = var.app
+  env = var.env
+  region = var.region
+  image_name = var.image_name
+}
+
 
 # Create a resource group
 resource "aws_resourcegroups_group" "app_resources" {

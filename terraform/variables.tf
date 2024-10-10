@@ -11,3 +11,7 @@ variable "app" {
   type = string
   default = "spring-boot-app"
 }
+
+variable "image_name" {
+  type = string
+}
