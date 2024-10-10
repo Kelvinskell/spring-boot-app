@@ -8,6 +8,8 @@ resource "aws_route_table" "private" {
 
   tags = {
     Name = "${local.env}-private"
+    app = local.app
+    Environment = local.env
   }
 }
 
@@ -21,6 +23,8 @@ resource "aws_route_table" "public" {
 
   tags = {
     Name = "${local.env}-public"
+    app = local.app
+    Environment = local.env
   }
 }
 

@@ -20,6 +20,8 @@ resource "aws_security_group" "alb_sg" {
 
   tags = {
     Environment = local.env
+    app = local.app
+    Name = "${local.app}-alb-sg"
   }
 }
 
@@ -48,5 +50,7 @@ resource "aws_security_group" "ecs_sg" {
 
   tags = {
     Environment = local.env
+    app = local.app
+    Name = "${local.app}-ecs-sg"
   }
 }

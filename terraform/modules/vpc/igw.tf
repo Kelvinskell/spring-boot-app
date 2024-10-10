@@ -3,5 +3,7 @@ resource "aws_internet_gateway" "igw" {
 
   tags = {
     Name = "${local.env}-main"
+    app = local.app
+    Environment = local.env
   }
 }

@@ -3,6 +3,8 @@ resource "aws_eip" "nat" {
 
   tags = {
     Name = "${local.env}-nat"
+    app = local.app
+    Environment = local.env
   }
 }
 resource "aws_nat_gateway" "nat" {
@@ -11,6 +13,8 @@ resource "aws_nat_gateway" "nat" {
 
   tags = {
     Name = "${local.env}-natgw-${local.app}"
+    app = local.app
+    Environment = local.env
   }
 
   depends_on = [aws_internet_gateway.igw]

@@ -9,6 +9,8 @@ resource "aws_lb" "alb" {
 
   tags = {
     Environment = local.env
+    app = local.app
+    Name = "${local.app}-ecs-alb"
   }
 }
 
@@ -32,6 +34,7 @@ resource "aws_lb_target_group" "tg" {
   }
   tags = {
     Environment = local.env
+    app = local.app
   }
 }
 
@@ -55,5 +58,6 @@ resource "aws_lb_listener" "http" {
   tags = {
     Name        = "${local.env}ecs-${local.app}-alb-listener"
     Environment = local.env
+    app = local.app
   }
 }
