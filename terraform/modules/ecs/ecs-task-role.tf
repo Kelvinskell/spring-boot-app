@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "assume_role_task" {
 
 # Create Role
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "ecsapp_ECS_Task_Role"
+  name               = "${local.app}-task-role-${local.env}"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.assume_role_task.json
 
@@ -32,7 +32,8 @@ resource "aws_iam_role" "ecs_task_execution_role" {
                 "ecr:GetDownloadUrlForLayer",
                 "ecr:BatchGetImage",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents"
             ],
             "Resource": "*"
         }
