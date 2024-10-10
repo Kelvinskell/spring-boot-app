@@ -23,6 +23,7 @@ resource "aws_secretsmanager_secret_version" "rds_secret_version" {
 # Fetch the secret values from Secrets Manager
 data "aws_secretsmanager_secret" "rds_secret" {
   name = "${var.env}/mysql-rds-credentials"
+  depends_on = [aws_secretsmanager_secret.rds_secret]
 }
 
 data "aws_secretsmanager_secret_version" "rds_secret_version" {
