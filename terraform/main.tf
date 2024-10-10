@@ -26,6 +26,16 @@ module "security_groups" {
   vpc_id = module.vpc.vpc_id
 }
 
+module "rds" {
+  source = "./modules/rds"
+
+  env = var.env
+  app = var.app
+  rds_sg = module.security_groups.RDS-sg_id
+  db_username = var.db_username
+  db_password = var.db_password
+}
+
 module "ecs" {
   source = "./modules/ecs"
 
@@ -37,6 +47,9 @@ module "ecs" {
   env = var.env
   region = var.region
   image_name = var.image_name
+  mysql_endpoint = module.rds.rds_endpoint
+  mysql_password = module.rds.mysql_password
+  mysql_username = module.rds.mysql_username
 }
 
 module "monitoring" {
