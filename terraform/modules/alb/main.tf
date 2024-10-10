@@ -35,6 +35,7 @@ resource "aws_lb_target_group" "tg" {
   tags = {
     Environment = local.env
     app = local.app
+     Name = "${local.app}-ecs-alb"
   }
 }
 
