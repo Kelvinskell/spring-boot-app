@@ -54,3 +54,29 @@ resource "aws_security_group" "ecs_sg" {
     Name = "${local.app}-ecs-sg"
   }
 }
+
+# Create RDS Sec group
+resource "aws_security_group" "rds_sg" {
+  name        = "${var.env}-rds-sg"
+  description = "Allow MySQL inbound traffic"
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_security_group.ecs_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "${var.env}-rds-sg-${local.app}"
+    Environment = var.env
+    app = local.app
+  }
+}
