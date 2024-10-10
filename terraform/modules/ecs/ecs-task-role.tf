@@ -1,24 +1,30 @@
-# Define policy document
-data "aws_iam_policy_document" "assume_role_task" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
+# Create Role
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "${local.app}-ecs_task_execution_role-${local.env}"
+  
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ecs-tasks.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  })
+  tags = {
+    Environment = local.env
+    app         = local.app
+    Name = "${local.app}-ecs-task-role-${local.env}"
   }
 }
 
-# Create Role
-resource "aws_iam_role" "ecs_task_execution_role" {
-  name               = "${local.app}-task-role-${local.env}"
-  path               = "/"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_task.json
-
-  inline_policy {
-    name = "ecs_task_execution_policy_for_ecs_app"
+# Create Policy
+resource "aws_iam_role_policy" "ecs_task_execution_policy" {
+  name   = "${local.env}-ecs_task_execution_policy-${local.app}"
+  role   = aws_iam_role.ecs_task_execution_role.id
 
     policy = jsonencode(
       {
@@ -33,7 +39,11 @@ resource "aws_iam_role" "ecs_task_execution_role" {
                 "ecr:BatchGetImage",
                 "logs:CreateLogStream",
                 "logs:CreateLogGroup",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                "cloudwatch:PutMetricData",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:ListMetrics",
+                "cloudwatch:DescribeAlarms"
             ],
             "Resource": "*"
         }
@@ -41,9 +51,3 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 }
     )
   }
-  tags = {
-    Environment = local.env
-    app = local.app
-    Name = "${local.env}-${local.app}-ecs-role"
-  }
-}
