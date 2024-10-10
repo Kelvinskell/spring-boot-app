@@ -39,6 +39,15 @@ module "ecs" {
   image_name = var.image_name
 }
 
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  env = var.env
+  app = var.app
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
+  region = var.region
+}
 
 # Create a resource group
 resource "aws_resourcegroups_group" "app_resources" {
