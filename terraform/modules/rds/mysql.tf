@@ -2,9 +2,7 @@
 resource "aws_db_subnet_group" "default" {
   name        = "default-db-subnet-group"
   description = "Default DB subnet group"
-  subnet_ids = [
-    var.private_subnet_ids
-  ]
+  subnet_ids = var.private_subnet_ids
 }
 
 # Create RDS Instance for MYSQL

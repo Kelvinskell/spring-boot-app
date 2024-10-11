@@ -14,5 +14,5 @@ output "mysql_password" {
 }
 
 output "rds_instance" {
-  value = aws_db_instance.mysql_rds
+  value = aws_db_instance.mysql_rds.arn
 }
