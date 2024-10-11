@@ -64,8 +64,9 @@ module "monitoring" {
   region = var.region
   # Set to false if you want to get notified eeach time a task fails. 
   # Set to true to get notified for only one ecs task failure. You won't be notified for subsequent task failures.
-  single_notification = true 
+  single_notification = false 
   sns_email_address = var.sns_email_address
+  ecs_cluster_arn = module.ecs.ecs_cluster_arn
 }
 
 # Create a resource group
