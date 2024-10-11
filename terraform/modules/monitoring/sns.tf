@@ -9,7 +9,7 @@ resource "aws_sns_topic" "ecs_cpu_topic" {
 }
 
 # Create SNS Topic for Task Failure notifications
-resource "aws_sns_topic" "ecs_failure_topic" {
+resource "aws_sns_topic" "ecs_task_failure_topic" {
   name = "${local.env}-ecs-failure-notification-topic-${local.app}"
   tags = {
     Environment = local.env
@@ -19,7 +19,7 @@ resource "aws_sns_topic" "ecs_failure_topic" {
 }
 
 # SNS topic for task success notifications
-resource "aws_sns_topic" "ecs_success_topic" {
+resource "aws_sns_topic" "ecs_task_success_topic" {
   name = "${local.env}-ecs-success-notification-topic-${local.app}"
   tags = {
     Environment = local.env

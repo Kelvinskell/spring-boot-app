@@ -19,38 +19,6 @@ resource "aws_cloudwatch_metric_alarm" "cpu_alarm" {
   }
 }
 
-# Create CloudWatch alarm for failed tasks
-resource "aws_cloudwatch_metric_alarm" "ecs_task_failed_alarm" {
-  alarm_name          = "${local.app}-ecs-task-failed-${local.env}"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = 1
-  metric_name         = "TaskFailed"
-  namespace           = "AWS/ECS"
-  period              = 60
-  statistic           = "Sum"
-  threshold           = 1
-  dimensions = {
-    ClusterName   = var.ecs_cluster_name
-    ServiceName   = var.ecs_service_name
-  }
-
-  alarm_actions      = [aws_sns_topic.ecs_cpu_topic.arn]
-  ok_actions         = []
-  insufficient_data_actions = []
-
-  # Conditional treat_missing_data behavior
-  treat_missing_data = var.single_notification ? "notBreaching" : "breaching"
-
-  # Set the alarm state manually to 'ALARM' after the first failure
-  lifecycle {
-    create_before_destroy = false
-  }
-  tags = {
-    Environment = local.env
-    app         = local.app
-  }
-}
-
 # CloudWatch Alarm for Successful Running Tasks
 resource "aws_cloudwatch_metric_alarm" "ecs_task_success_alarm" {
   alarm_name          = "ecs-task-successful-running"
@@ -67,7 +35,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_success_alarm" {
     ServiceName = var.ecs_service_name
   }
 
-  alarm_actions      = [aws_sns_topic.ecs_success_topic.arn]
+  alarm_actions      = [aws_sns_topic.ecs_task_success_topic.arn]
   ok_actions         = []
   insufficient_data_actions = []
 
@@ -77,4 +45,29 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_success_alarm" {
     Environment = local.env
     app         = local.app
   }
+}
+
+resource "aws_cloudwatch_event_rule" "ecs_task_failure_rule" {
+  name        = "${local.env}-ecs-task-failure-rule"
+  description = "Event rule to capture ECS task failures"
+  event_pattern = jsonencode({
+    "source" = ["aws.ecs"],
+    "detail-type" = ["ECS Task State Change"],
+    "detail" = {
+      "clusterArn" = var.ecs_cluster_arn,
+      "lastStatus" = ["STOPPED"],
+      "stoppedReason" = [
+        "Essential container in task exited",
+        "Task failed",
+        "Task timed out",
+        "User initiated stop"
+        ]
+    }
+  })
+}
+
+resource "aws_cloudwatch_event_target" "ecs_failure_target" {
+  rule      = aws_cloudwatch_event_rule.ecs_task_failure_rule.name
+  arn       = aws_sns_topic.ecs_task_failure_topic.arn
+  role_arn = aws_iam_role.eventbridge_to_sns_role.arn
 }
