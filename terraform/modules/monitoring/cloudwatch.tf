@@ -8,7 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_alarm" {
   period              = "60"
   statistic           = "Average"
   threshold           = "80"
-  alarm_actions       = [aws_sns_topic.alarm_topic.arn]
+  alarm_actions       = [aws_sns_topic.ecs_cpu_topic.arn]
   dimensions = {
     ClusterName  = var.ecs_cluster_name
     ServiceName  = var.ecs_service_name
@@ -34,7 +34,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_failed_alarm" {
     ServiceName   = var.ecs_service_name
   }
 
-  alarm_actions      = [aws_sns_topic.alarm_topic.arn]
+  alarm_actions      = [aws_sns_topic.ecs_cpu_topic.arn]
   ok_actions         = []
   insufficient_data_actions = []
 

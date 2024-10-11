@@ -25,3 +25,8 @@ variable "db_password" {
   type = string
   sensitive = true
 }
+
+variable "sns_email_address" {
+  type = string
+  description = "The email address to subscribe to SNS Topics"
+}
