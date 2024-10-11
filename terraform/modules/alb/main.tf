@@ -24,12 +24,12 @@ resource "aws_lb_target_group" "tg" {
   health_check {
     enabled             = true
     healthy_threshold   = 2
-    interval            = 60
+    interval            = 120
     matcher             = "200-299"
     path                = "/"
-    port                = 5000
+    port                = 8080
     protocol            = "HTTP"
-    timeout             = 10
+    timeout             = 15
     unhealthy_threshold = 4
   }
   tags = {
