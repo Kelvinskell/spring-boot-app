@@ -34,6 +34,7 @@ module "rds" {
   rds_sg = module.security_groups.RDS-sg_id
   db_username = var.db_username
   db_password = var.db_password
+  private_subnet_ids = flatten([module.vpc.private_subnets[*]])
 }
 
 module "ecs" {
@@ -50,6 +51,7 @@ module "ecs" {
   mysql_endpoint = module.rds.rds_endpoint
   mysql_password = module.rds.mysql_password
   mysql_username = module.rds.mysql_username
+  rds_instance = module.rds.rds_instance
 }
 
 module "monitoring" {
