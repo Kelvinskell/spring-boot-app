@@ -59,6 +59,7 @@ resource "aws_security_group" "ecs_sg" {
 resource "aws_security_group" "rds_sg" {
   name        = "${var.env}-rds-sg"
   description = "Allow MySQL inbound traffic"
+  vpc_id = var.vpc_id
 
   ingress {
     from_port   = 3306
