@@ -27,7 +27,7 @@ resource "aws_lb_target_group" "tg" {
     interval            = 60
     matcher             = "200-299"
     path                = "/"
-    port                = 5000
+    port                = 8080
     protocol            = "HTTP"
     timeout             = 10
     unhealthy_threshold = 4

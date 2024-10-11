@@ -34,7 +34,7 @@ module "rds" {
   rds_sg = module.security_groups.RDS-sg_id
   db_username = var.db_username
   db_password = var.db_password
-  private_subnet_ids = flatten([module.vpc.private_subnets[*]])
+  private_subnet_ids = flatten([module.vpc.public_subnets[*]])
 }
 
 module "ecs" {
