@@ -12,3 +12,7 @@ output "mysql_password" {
   value = local.rds_credentials["password"]
   sensitive = true
 }
+
+output "rds_instance" {
+  value = aws_db_instance.mysql_rds
+}
