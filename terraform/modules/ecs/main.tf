@@ -37,4 +37,6 @@ resource "aws_ecs_service" "ecs-svc" {
     Environment = local.env
     app = local.app
   }
+
+  depends_on = [ local.rds_instance ]
 }

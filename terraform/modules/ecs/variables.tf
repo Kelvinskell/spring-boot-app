@@ -43,3 +43,7 @@ variable "mysql_password" {
 variable "mysql_endpoint" {
  type = string 
 }
+
+variable "rds_instance" {
+  type = string
+}
