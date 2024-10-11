@@ -1,7 +1,11 @@
+# Create random charcters
+resource "random_uuid" "random_chars" {
+}
+
 # Create MySQL credentials in AWS Secrets Manager
 resource "aws_secretsmanager_secret" "rds_secret" {
-  name        = "${var.env}/mysql-rds-credentials"
-  description = "MySQL RDS credentials for ${var.env} environment"
+  name        = "${var.env}/mysql-rds-credentials-${random_uuid.random_chars.result}"
+  description = "${local.app}-MySQL RDS credentials for ${var.env} environment"
   
   tags = {
     Environment = var.env
@@ -22,7 +26,7 @@ resource "aws_secretsmanager_secret_version" "rds_secret_version" {
 
 # Fetch the secret values from Secrets Manager
 data "aws_secretsmanager_secret" "rds_secret" {
-  name = "${var.env}/mysql-rds-credentials"
+  name = "${var.env}/mysql-rds-credentials-${random_uuid.random_chars.result}"
   depends_on = [aws_secretsmanager_secret.rds_secret]
 }
 
