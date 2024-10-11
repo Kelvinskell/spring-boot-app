@@ -40,7 +40,7 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_success_alarm" {
   insufficient_data_actions = []
 
   # Conditional treat_missing_data behavior for successful tasks
-  treat_missing_data = var.single_notification ? "notBreaching" : "breaching"
+  treat_missing_data = var.single_notification ? "notBreaching" : "missing"
   tags = {
     Environment = local.env
     app         = local.app
@@ -48,13 +48,13 @@ resource "aws_cloudwatch_metric_alarm" "ecs_task_success_alarm" {
 }
 
 resource "aws_cloudwatch_event_rule" "ecs_task_failure_rule" {
-  name        = "${local.env}-ecs-task-failure-rule"
-  description = "Event rule to capture ECS task failures"
+  name        = "${local.env}-ecs-task-failure-rule-${local.app}"
+  description = "Event rule to capture ECS task failures for ${local.app} in ${local.env} environment"
   event_pattern = jsonencode({
     "source" = ["aws.ecs"],
     "detail-type" = ["ECS Task State Change"],
     "detail" = {
-      "clusterArn" = var.ecs_cluster_arn,
+      "clusterArn" = [var.ecs_cluster_arn],
       "lastStatus" = ["STOPPED"],
       "stoppedReason" = [
         "Essential container in task exited",
@@ -64,10 +64,14 @@ resource "aws_cloudwatch_event_rule" "ecs_task_failure_rule" {
         ]
     }
   })
+  tags = {
+    app = local.app
+    Environment = local.env
+    Name = "${local.env}-ecs-task-failure-events-${local.app}"
+  }
 }
 
 resource "aws_cloudwatch_event_target" "ecs_failure_target" {
   rule      = aws_cloudwatch_event_rule.ecs_task_failure_rule.name
   arn       = aws_sns_topic.ecs_task_failure_topic.arn
-  role_arn = aws_iam_role.eventbridge_to_sns_role.arn
 }
