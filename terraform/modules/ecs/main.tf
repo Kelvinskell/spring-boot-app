@@ -1,6 +1,6 @@
 # Create ECS Cluster
 resource "aws_ecs_cluster" "ecs-cluster" {
-  name = "ecs-app-cluster"
+  name = "${local.app}-ecs-app-cluster-${local.env}"
 
   setting {
     name  = "containerInsights"
