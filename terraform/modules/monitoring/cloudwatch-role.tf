@@ -66,3 +66,27 @@ resource "aws_sns_topic_policy" "ecs_task_failure_policy" {
     ]
   })
 }
+
+# create sns policy for task success
+resource "aws_sns_topic_policy" "ecs_task_success_policy" {
+  arn = aws_sns_topic.ecs_task_success_topic.arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = {
+          Service = "events.amazonaws.com"
+        }
+        Action   = "sns:Publish"
+        Resource = aws_sns_topic.ecs_task_success_topic.arn
+        Condition = {
+          ArnEquals = {
+            "aws:SourceArn" = aws_cloudwatch_event_rule.ecs_task_success_rule.arn
+          }
+        }
+      }
+    ]
+  })
+}
