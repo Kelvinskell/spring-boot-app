@@ -17,7 +17,7 @@ output "rds_instance" {
   value = aws_db_instance.mysql_rds.arn
 }
 
-output "lambda_iam_role" {
-  description = "The iam role resource attached to the lambda function"
-  value = aws_iam_role.lambda_rds_role
+output "lambda_eni_policy" {
+  description = "The eni policy resource attached to the lambda role"
+  value = aws_iam_policy.lambda_vpc_access
 }

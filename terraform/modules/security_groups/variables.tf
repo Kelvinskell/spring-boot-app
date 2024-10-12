@@ -10,6 +10,6 @@ variable "env" {
   type = string
 }
 
-variable "lambda_iam_role" {
-  description = "The role attached to the lambda resource"
+variable "lambda_eni_policy" {
+  description = "The eni policy attached to the lambda role"
 }

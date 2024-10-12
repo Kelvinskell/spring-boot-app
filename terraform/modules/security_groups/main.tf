@@ -99,5 +99,5 @@ resource "aws_security_group" "lambda_sg" {
     app         = local.app
   }
 
-  depends_on = [ var.lambda_iam_role ]
+  depends_on = [ var.lambda_eni_policy ]
 }
