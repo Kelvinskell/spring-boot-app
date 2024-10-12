@@ -18,7 +18,7 @@ resource "aws_ecs_service" "ecs-svc" {
   name            = "ecs-app-svc"
   cluster         = aws_ecs_cluster.ecs-cluster.id
   task_definition = aws_ecs_task_definition.ecs_task.id
-  desired_count = 1
+  desired_count = 2
   launch_type = "FARGATE"
 
   load_balancer {
