@@ -17,7 +17,7 @@ resource "aws_db_instance" "mysql_rds" {
   password             = local.rds_credentials["password"]
   parameter_group_name = "default.mysql8.0"
   skip_final_snapshot  = true
-  publicly_accessible  = true
+  publicly_accessible  = false
   vpc_security_group_ids = [var.rds_sg]  # Security group for RDS
 
   tags = {

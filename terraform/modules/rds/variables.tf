@@ -23,3 +23,7 @@ variable "db_password" {
 variable "private_subnet_ids" {
   type = list
 }
+
+variable "lambda_sg" {
+  type = string
+}
