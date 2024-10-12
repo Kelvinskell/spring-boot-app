@@ -24,7 +24,7 @@ module "security_groups" {
   app = var.app
   env = var.env
   vpc_id = module.vpc.vpc_id
-  lambda_eni_policy = module.rds.lambda_eni_policy
+  lambda_iam_role = module.rds.lambda_iam_role
 }
 
 module "rds" {
