@@ -54,6 +54,8 @@ module "ecs" {
   mysql_password = module.rds.mysql_password
   mysql_username = module.rds.mysql_username
   rds_instance = module.rds.rds_instance
+
+  depends_on = [ module.rds ]
 }
 
 module "monitoring" {
