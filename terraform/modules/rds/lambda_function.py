@@ -55,11 +55,6 @@ def lambda_handler(event, context):
                 );
             """)
 
-            # Grant privileges (consider running this separately)
-            cursor.execute("""
-                GRANT ALL PRIVILEGES ON mydb.* TO 'greg'@'%';
-            """)
-
             # Flush privileges
             cursor.execute("FLUSH PRIVILEGES;")
 
