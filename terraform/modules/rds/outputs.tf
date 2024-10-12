@@ -16,3 +16,8 @@ output "mysql_password" {
 output "rds_instance" {
   value = aws_db_instance.mysql_rds.arn
 }
+
+output "lambda_iam_role" {
+  description = "The iam role resource attached to the lambda function"
+  value = aws_iam_role.lambda_rds_role
+}

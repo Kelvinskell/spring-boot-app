@@ -19,34 +19,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_alarm" {
   }
 }
 
-# Create an EventBridge rule for ECS task success
-resource "aws_cloudwatch_event_rule" "ecs_task_success_rule" {
-  name        = "${local.env}-ecs-task-success-rule-${local.app}"
-  description = "Event rule to capture ECS task successes for ${local.app} in ${local.env} environment"
-  
-  event_pattern = jsonencode({
-    "source"      = ["aws.ecs"],
-    "detail-type" = ["ECS Task State Change"],
-    "detail"      = {
-      "clusterArn" = [var.ecs_cluster_arn],
-      "lastStatus" = ["SUCCEEDED"]
-    }
-  })
-  
-  tags = {
-    app         = local.app
-    Environment = local.env
-    Name        = "${local.env}-ecs-task-success-events-${local.app}"
-  }
-}
-
-# Create an EventBridge target to send events to the SNS topic for successful tasks
-resource "aws_cloudwatch_event_target" "ecs_success_target" {
-  rule      = aws_cloudwatch_event_rule.ecs_task_success_rule.name
-  arn       = aws_sns_topic.ecs_task_success_topic.arn
-}
-
-# create an Eventbridge rule for ecs task failure
+# Create ECS task failure notification
 resource "aws_cloudwatch_event_rule" "ecs_task_failure_rule" {
   name        = "${local.env}-ecs-task-failure-rule-${local.app}"
   description = "Event rule to capture ECS task failures for ${local.app} in ${local.env} environment"
@@ -71,7 +44,36 @@ resource "aws_cloudwatch_event_rule" "ecs_task_failure_rule" {
   }
 }
 
+# Send ECS Failure Events to SNS Topic
 resource "aws_cloudwatch_event_target" "ecs_failure_target" {
   rule      = aws_cloudwatch_event_rule.ecs_task_failure_rule.name
   arn       = aws_sns_topic.ecs_task_failure_topic.arn
+}
+
+# Capture ECS Success Events
+resource "aws_cloudwatch_event_rule" "ecs_task_success_rule" {
+  name        = "${local.env}-ecs-task-success-rule-${local.app}"
+  description = "Event rule to capture ECS task successes for ${local.app} in ${local.env} environment"
+  
+  event_pattern = jsonencode({
+    "source" = ["aws.ecs"],
+    "detail-type" = ["ECS Task State Change"],
+    "detail" = {
+      "clusterArn" = [var.ecs_cluster_arn],
+      "lastStatus" = ["RUNNING"],
+      "desiredStatus" = ["RUNNING"]
+    }
+  })
+
+  tags = {
+    app         = local.app
+    Environment = local.env
+    Name        = "${local.env}-ecs-task-success-events-${local.app}"
+  }
+}
+
+# Send ECS Success events to SNS topic
+resource "aws_cloudwatch_event_target" "ecs_success_target" {
+  rule = aws_cloudwatch_event_rule.ecs_task_success_rule.name
+  arn  = aws_sns_topic.ecs_task_success_topic.arn
 }

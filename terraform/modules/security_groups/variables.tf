@@ -9,3 +9,7 @@ variable "app" {
 variable "env" {
   type = string
 }
+
+variable "lambda_iam_role" {
+  description = "The role attached to the lambda resource"
+}

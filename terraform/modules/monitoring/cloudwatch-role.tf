@@ -44,6 +44,7 @@ resource "aws_iam_role_policy" "cloudwatch_alarm_policy" {
   })
 }
 
+# Create SNS Policy for failure topic
 resource "aws_sns_topic_policy" "ecs_task_failure_policy" {
   arn = aws_sns_topic.ecs_task_failure_topic.arn
 
@@ -67,7 +68,7 @@ resource "aws_sns_topic_policy" "ecs_task_failure_policy" {
   })
 }
 
-# create sns policy for task success
+# Create SNS Policy for success topic
 resource "aws_sns_topic_policy" "ecs_task_success_policy" {
   arn = aws_sns_topic.ecs_task_success_topic.arn
 

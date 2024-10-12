@@ -21,6 +21,17 @@ resource "aws_lb_target_group" "tg" {
   protocol = "HTTP"
   vpc_id   = var.vpc_id
   target_type = "ip"
+  health_check {
+    enabled             = true
+    healthy_threshold   = 2
+    interval            = 60
+    matcher             = "200-299"
+    path                = "/login"
+    port                = 8080
+    protocol            = "HTTP"
+    timeout             = 10
+    unhealthy_threshold = 4
+  }
   tags = {
     Environment = local.env
     app = local.app
