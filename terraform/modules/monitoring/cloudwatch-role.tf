@@ -44,6 +44,7 @@ resource "aws_iam_role_policy" "cloudwatch_alarm_policy" {
   })
 }
 
+# Create SNS Policy for failure topic
 resource "aws_sns_topic_policy" "ecs_task_failure_policy" {
   arn = aws_sns_topic.ecs_task_failure_topic.arn
 
@@ -60,6 +61,30 @@ resource "aws_sns_topic_policy" "ecs_task_failure_policy" {
         Condition = {
           ArnEquals = {
             "aws:SourceArn" = aws_cloudwatch_event_rule.ecs_task_failure_rule.arn
+          }
+        }
+      }
+    ]
+  })
+}
+
+# Create SNS Policy for success topic
+resource "aws_sns_topic_policy" "ecs_task_success_policy" {
+  arn = aws_sns_topic.ecs_task_success_topic.arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = {
+          Service = "events.amazonaws.com"
+        }
+        Action   = "sns:Publish"
+        Resource = aws_sns_topic.ecs_task_success_topic.arn
+        Condition = {
+          ArnEquals = {
+            "aws:SourceArn" = aws_cloudwatch_event_rule.ecs_task_success_rule.arn
           }
         }
       }
