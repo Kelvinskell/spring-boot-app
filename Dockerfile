@@ -15,9 +15,9 @@ COPY . ./
 
 # Install Node.js and npm for building the frontend 
 RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
-    npm install -g npm@6.14.13  # Install the desired npm version
+    npm install -g npm@6.14.13 
 
 # Run frontend build
 RUN cd src/main/resources/static && npm install && npm run build
