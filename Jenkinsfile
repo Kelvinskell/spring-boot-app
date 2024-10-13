@@ -77,6 +77,7 @@ pipeline {
                         terraform apply -var='db_username=${DB_USERNAME_DEV}' \
                                        -var='db_password=${DB_PASSWORD_DEV}' \
                                        -var='image_name=${env.IMAGE_NAME}' \
+                                       -var='sns_email_address=${SNS_EMAIL}' \
                                        -var-file=${environment}.tfvars -auto-approve -json > tf-output.json
                         """
                     }
@@ -116,6 +117,7 @@ pipeline {
                         terraform apply -var='db_username=${DB_USERNAME_STAGING}' \
                                        -var='db_password=${DB_PASSWORD_STAGING}' \
                                        -var='image_name=${env.IMAGE_NAME}' \
+                                       -var='sns_email_address=${SNS_EMAIL}' \
                                        -var-file=${environment}.tfvars -auto-approve -json > tf-output.json
                         """
                     }
@@ -156,6 +158,7 @@ pipeline {
                         terraform apply -var='db_username=${DB_USERNAME_PROD}' \
                                        -var='db_password=${DB_PASSWORD_PROD}' \
                                        -var='image_name=${env.IMAGE_NAME}' \
+                                       -var='sns_email_address=${SNS_EMAIL}' \
                                        -var-file=${environment}.tfvars -auto-approve -json > tf-output.json
                         """
                     }
