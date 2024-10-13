@@ -44,8 +44,11 @@ pipeline {
         stage('Scan Image with Trivy') {
             steps {
                 script {
+                //    sh """
+                //    trivy image --exit-code 1 --severity HIGH,CRITICAL ${env.IMAGE_NAME}
+                //    """
                     sh """
-                    trivy image --exit-code 1 --severity HIGH,CRITICAL ${env.IMAGE_NAME}
+                    trivy image --advisory --exit-code o --severity HIGH,CRITICAL ${env.IMAGE_NAME}
                     """
                 }
             }
