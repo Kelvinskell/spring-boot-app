@@ -22,3 +22,8 @@ output "sns_topic_arn" {
   description = "The sns topic for jenkins deployments"
   value = module.monitoring.jenkins_topic_arn
 }
+
+output "aws_region" {
+  description = "The AWS region to deploy infa"
+  value = var.region
+}
