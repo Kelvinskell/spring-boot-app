@@ -1,0 +1,93 @@
+pipeline {
+    parameters {
+        string(name: 'IMAGE_NAME', defaultValue: '', description: 'Enter the Docker image')
+    }
+    agent any
+    environment {
+        AWS_ACCESS_KEY_ID      = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY  = credentials('aws-secret-access-key')
+        DB_USERNAME_STAGING    = credentials('db-username-staging')
+        DB_PASSWORD_STAGING    = credentials('db-password-staging')
+        SNS_EMAIL              = credentials('sns-email-address')
+        CONTAINER_NAME         = "Spring-Boot-App"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Run Basic Tests') {
+            steps {
+                script {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def imageTag = "${env.BUILD_ID}"  
+                    def imageName = "${params.IMAGE_NAME}:${imageTag}"
+                    env.IMAGE_NAME = imageName
+                    
+                    sh """
+                    docker build -t ${imageName} .
+                    """
+                }
+            }
+        }
+
+        stage('Scan Image with Trivy') {
+            steps {
+                script {
+                    sh """
+                    trivy image --exit-code 0 --severity HIGH,CRITICAL ${env.IMAGE_NAME}
+                    """
+                }
+            }
+        }
+
+        stage('Push Docker Image to DockerHub') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker') {
+                        sh """
+                        docker push ${env.IMAGE_NAME}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Staging Environment') {
+            steps {
+                script {
+                    dir('terraform') {
+                        def environment = 'staging'
+                        sh """
+                        terraform init -input=false
+                        terraform workspace select ${environment} || terraform workspace new ${environment}
+                        terraform apply -var='db_username=${DB_USERNAME_STAGING}' \
+                                       -var='db_password=${DB_PASSWORD_STAGING}' \
+                                       -var='image_name=${env.IMAGE_NAME}' \
+                                       -var='sns_email_address=${SNS_EMAIL}' \
+                                       -var-file=${environment}.tfvars -auto-approve 
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                snsPublish topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment to Staging environment completed with image ${env.IMAGE_NAME}."
+            }
+        }
+    }
+}
