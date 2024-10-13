@@ -90,7 +90,7 @@ pipeline {
     steps {
         script {
             // Get the current task definition ARN for the service
-            def currentTaskDefinitionProd = sh(script: """
+            def currentTaskDefinition = sh(script: """
                 aws ecs describe-services --cluster ${env.CLUSTER_NAME_DEV} \
                     --services ${env.SERVICE_NAME_DEV} \
                     --region ${env.AWS_REGION_DEV} \
@@ -98,7 +98,7 @@ pipeline {
                     --output text
             """, returnStdout: true).trim()
 
-            echo "Updating Dev ECS Service: Current Task Definition: ${currentTaskDefinitionProd}"
+            echo "Updating Dev ECS Service: Current Task Definition: ${currentTaskDefinition}"
 
             // Update the ECS service with the new task definition and image override
             sh """
@@ -106,7 +106,7 @@ pipeline {
                                         --service ${env.SERVICE_NAME_DEV} \
                                         --force-new-deployment \
                                         --region ${env.AWS_REGION_DEV} \
-                                        --task-definition ${currentTaskDefinitionProd}
+                                        --task-definition ${currentTaskDefinition}
             """
         }
     }
