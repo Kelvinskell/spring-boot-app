@@ -1,8 +1,7 @@
 pipeline {
     agent any
     environment {
-        AWS_ACCESS_KEY_ID      = credentials('aws-access-key-id')
-        AWS_SECRET_ACCESS_KEY  = credentials('aws-secret-access-key')
+        AWS_CREDENTIALS = credentials('aws-credentials')
         DB_USERNAME_DEV        = credentials('db-username-dev')
         DB_PASSWORD_DEV        = credentials('db-password-dev')
         DB_USERNAME_STAGING    = credentials('db-username-staging')
