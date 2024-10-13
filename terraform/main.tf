@@ -37,6 +37,7 @@ module "rds" {
   db_password = var.db_password
   private_subnet_ids = flatten([module.vpc.private_subnets[*]])
   lambda_sg = module.security_groups.lambda_sg_id
+  region = var.region
 }
 
 module "ecs" {

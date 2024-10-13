@@ -1,7 +1,10 @@
 resource "null_resource" "invoke_lambda" {
   provisioner "local-exec" {
     command = <<EOT
-      aws lambda invoke --function-name ${aws_lambda_function.rds_setup_lambda.function_name} --payload '{}' /dev/null
+      aws lambda invoke --function-name ${aws_lambda_function.rds_setup_lambda.function_name} \
+        --payload '{}' \
+        --region ${var.region} \
+        /dev/null
     EOT
   }
 

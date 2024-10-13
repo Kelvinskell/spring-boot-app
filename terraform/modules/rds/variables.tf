@@ -27,3 +27,7 @@ variable "private_subnet_ids" {
 variable "lambda_sg" {
   type = string
 }
+
+variable "region" {
+  type = string
+}
