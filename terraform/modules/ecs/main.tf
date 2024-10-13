@@ -23,7 +23,7 @@ resource "aws_ecs_service" "ecs-svc" {
 
   load_balancer {
     target_group_arn = var.tg_arn
-    container_name   = "${local.app}-spring-boot-app-${local.env}"
+    container_name   = "Spring-Boot-App"
     container_port   = 8080
   }
 
