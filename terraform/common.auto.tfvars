@@ -1,0 +1,2 @@
+# DO NOT PUT SENSITIVE VALUES IN THIS FILE
+app = "Spring-Boot-App"
