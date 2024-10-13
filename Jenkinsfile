@@ -183,14 +183,9 @@ pipeline {
     }
 
     post {
-        failure {
-            script {
-                snsNotify topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment failed in the pipeline!"
-            }
-        }
         success {
             script {
-                snsNotify topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment of ECS service completed with image ${env.IMAGE_NAME} is Successful."
+                snsPublish topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment of ECS service completed with image ${env.IMAGE_NAME} is Successful."
             }
         }
     }
