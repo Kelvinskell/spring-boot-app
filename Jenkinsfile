@@ -12,7 +12,7 @@ pipeline {
         CONTAINER_NAME         = "Spring-Boot-App"
     }
     tools {
-        docker 'docker'
+        dockerTool 'docker'
     }
     
     stages {
