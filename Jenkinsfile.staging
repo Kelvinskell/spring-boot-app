@@ -91,7 +91,7 @@ pipeline {
     post {
         success {
             script {
-                withRegion(env.AWS_REGION_PROD) {
+                withAWS(region: env.AWS_REGION_PROD) {
                 def snsTopicArn = "${env.SNS_TOPIC_ARN}"
                 snsPublish topicArn: snsTopicArn, message: "Deployment to Staging environment completed with image ${env.IMAGE_NAME}."
                 //snsPublish topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment to Staging environment completed with image ${env.IMAGE_NAME}."
