@@ -86,37 +86,32 @@ pipeline {
                 }
             }
         }
-        stage('Update ECS Service For Prod Environment') {
-            steps {
-                script {
-                    // Get the current task definition ARN for the service
-                    def currentTaskDefinitionProd = sh(script: """
-                        aws ecs describe-services --cluster ${env.CLUSTER_NAME_STAGING} \
-                            --services ${env.SERVICE_NAME_STAGING} \
-                            --region ${env.AWS_REGION_STAGING} \
-                            --query 'services[0].taskDefinition' \
-                            --output text
-                    """, returnStdout: true).trim()
+       stage('Update ECS Service For Staging Environment') {
+    steps {
+        script {
+            // Get the current task definition ARN for the service
+            def currentTaskDefinitionProd = sh(script: """
+                aws ecs describe-services --cluster ${env.CLUSTER_NAME_STAGING} \
+                    --services ${env.SERVICE_NAME_STAGING} \
+                    --region ${env.AWS_REGION_STAGING} \
+                    --query 'services[0].taskDefinition' \
+                    --output text
+            """, returnStdout: true).trim()
 
-                    echo "Updating Production ECS Service: Current Task Definition: ${currentTaskDefinitionProd}"
+            echo "Updating Staging ECS Service: Current Task Definition: ${currentTaskDefinitionProd}"
 
-                    // Update the ECS service with the new task definition and image override
-                    sh """
-                        aws ecs update-service --cluster ${env.CLUSTER_NAME_STAGING} \
-                                               --service ${env.SERVICE_NAME_STAGING} \
-                                               --force-new-deployment \
-                                               --region ${env.AWS_REGION_STAGING} \
-                                               --task-definition ${currentTaskDefinitionProd} \
-                                               --container-overrides '[
-                                                   {
-                                                       "name": "${env.CONTAINER_NAME}",
-                                                       "image": "${env.IMAGE_NAME}"
-                                                   }
-                                               ]'
-                    """
-                }
-            }
+            // Update the ECS service with the new task definition and image override
+            sh """
+                aws ecs update-service --cluster ${env.CLUSTER_NAME_STAGING} \
+                                        --service ${env.SERVICE_NAME_STAGING} \
+                                        --force-new-deployment \
+                                        --region ${env.AWS_REGION_STAGING} \
+                                        --task-definition ${currentTaskDefinitionProd} \
+                                        --container-overrides '[{"name": "${env.CONTAINER_NAME}", "image": "${env.IMAGE_NAME}"}]'
+            """
         }
+    }
+}
     }
 
     post {
