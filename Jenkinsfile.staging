@@ -106,8 +106,7 @@ pipeline {
                                         --service ${env.SERVICE_NAME_STAGING} \
                                         --force-new-deployment \
                                         --region ${env.AWS_REGION_STAGING} \
-                                        --task-definition ${currentTaskDefinitionProd} \
-                                        --container-overrides '[{"name": "${env.CONTAINER_NAME}", "image": "${env.IMAGE_NAME}"}]'
+                                        --task-definition ${currentTaskDefinitionProd} \ 
             """
         }
     }
