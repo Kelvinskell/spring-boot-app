@@ -1,6 +1,6 @@
 pipeline {
     parameters {
-        string(name: 'IMAGE_NAME', defaultValue: '', description: 'Enter the Docker image')
+        string(name: 'IMAGE_NAME', defaultValue: '', description: 'Enter the image repository name (e.g: kelvinskell/bh-spring-boot-app)')
     }
     agent any
     environment {

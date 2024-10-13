@@ -1,7 +1,7 @@
 pipeline {
     agent any
      parameters {
-        string(name: 'IMAGE_NAME', defaultValue: '', description: 'Enter the Docker image')
+        string(name: 'IMAGE_NAME', defaultValue: '', description: 'Enter the image repository name (e.g: kelvinskell/bh-spring-boot-app)')
     }
     environment {
         AWS_ACCESS_KEY_ID      = credentials('aws-access-key-id')
