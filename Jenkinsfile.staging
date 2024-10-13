@@ -77,6 +77,11 @@ pipeline {
                                        -var='sns_email_address=${SNS_EMAIL}' \
                                        -var-file=${environment}.tfvars -auto-approve 
                         """
+                        // Get values from Terraform outputs
+                        env.CLUSTER_NAME_PROD = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
+                        env.SERVICE_NAME_PROD = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
+                        env.AWS_REGION_PROD = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
+                        env.SNS_TOPIC_ARN = sh(script: 'terraform output -raw sns_topic_arn', returnStdout: true).trim()
                     }
                 }
             }
