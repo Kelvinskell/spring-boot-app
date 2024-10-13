@@ -79,17 +79,15 @@ pipeline {
                                        -var='db_password=${DB_PASSWORD_DEV}' \
                                        -var='image_name=${env.IMAGE_NAME}' \
                                        -var='sns_email_address=${SNS_EMAIL}' \
-                                       -var-file=${environment}.tfvars -auto-approve -json > tf-output.json
+                                       -var-file=${environment}.tfvars -auto-approve 
                         """
                     }
                     
-                    script {
-                        def tfOutput = readJSON file: "terraform/tf-output.json"
-                        env.CLUSTER_NAME_DEV = tfOutput.outputs.ecs_cluster_name.value
-                        env.SERVICE_NAME_DEV = tfOutput.outputs.ecs_service_name.value
-                        env.AWS_REGION_DEV = tfOutput.outputs.region
-                    }
-
+                    // Get Values from Terraform outputs
+                    env.CLUSTER_NAME_DEV = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
+                    env.SERVICE_NAME_DEV = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
+                    env.AWS_REGION_DEV = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
+                    
                     sh """
                      aws ecs update-service --cluster ${env.CLUSTER_NAME_DEV} \
                                    --service ${env.SERVICE_NAME_DEV} \
@@ -119,16 +117,14 @@ pipeline {
                                        -var='db_password=${DB_PASSWORD_STAGING}' \
                                        -var='image_name=${env.IMAGE_NAME}' \
                                        -var='sns_email_address=${SNS_EMAIL}' \
-                                       -var-file=${environment}.tfvars -auto-approve -json > tf-output.json
+                                       -var-file=${environment}.tfvars -auto-approve 
                         """
                     }
 
-                    script {
-                        def tfOutput = readJSON file: "terraform/tf-output.json"
-                        env.CLUSTER_NAME_STAGING = tfOutput.outputs.ecs_cluster_name.value
-                        env.SERVICE_NAME_STAGING = tfOutput.outputs.ecs_service_name.value
-                        env.AWS_REGION_STAGING = tfOutput.outputs.region
-                    }
+                    // Get the ECS cluster name from Terraform outputs
+                    env.CLUSTER_NAME_STAGING = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
+                    env.SERVICE_NAME_STAGING = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
+                    env.AWS_REGION_STAGING = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
 
                     sh """
                     aws ecs update-service --cluster ${env.CLUSTER_NAME_STAGING} \
@@ -160,16 +156,14 @@ pipeline {
                                        -var='db_password=${DB_PASSWORD_PROD}' \
                                        -var='image_name=${env.IMAGE_NAME}' \
                                        -var='sns_email_address=${SNS_EMAIL}' \
-                                       -var-file=${environment}.tfvars -auto-approve -json > tf-output.json
+                                       -var-file=${environment}.tfvars -auto-approve
                         """
                     }
 
-                    script {
-                        def tfOutput = readJSON file: "terraform/tf-output.json"
-                        env.CLUSTER_NAME_PROD = tfOutput.outputs.ecs_cluster_name.value
-                        env.SERVICE_NAME_PROD = tfOutput.outputs.ecs_service_name.value
-                        env.AWS_REGION_PROD = tfOutput.outputs.region
-                    }
+                    // Get the ECS cluster name from Terraform outputs
+                    env.CLUSTER_NAME_PROD = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
+                    env.SERVICE_NAME_PROD = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
+                    env.AWS_REGION_PROD = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
 
                     sh """
                      aws ecs update-service --cluster ${env.CLUSTER_NAME_PROD} \
