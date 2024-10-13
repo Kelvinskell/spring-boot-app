@@ -78,6 +78,11 @@ pipeline {
                                        -var='sns_email_address=${SNS_EMAIL}' \
                                        -var-file=${environment}.tfvars -auto-approve
                         """
+                        // Get values from Terraform outputs
+                        env.CLUSTER_NAME_PROD = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
+                        env.SERVICE_NAME_PROD = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
+                        env.AWS_REGION_PROD = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
+                        env.SNS_TOPIC_ARN = sh(script: 'terraform output -raw sns_topic_arn', returnStdout: true).trim()
                     }
                 }
             }
@@ -87,7 +92,7 @@ pipeline {
             steps {
                 script {
                     // Get the current task definition ARN for the service
-                    def currentTaskDefinitionProd = sh(script: """
+                    def currentTaskDefinition = sh(script: """
                         aws ecs describe-services --cluster ${env.CLUSTER_NAME_PROD} \
                             --services ${env.SERVICE_NAME_PROD} \
                             --region ${env.AWS_REGION_PROD} \
@@ -95,7 +100,7 @@ pipeline {
                             --output text
                     """, returnStdout: true).trim()
 
-                    echo "Updating Production ECS Service: Current Task Definition: ${currentTaskDefinitionProd}"
+                    echo "Updating Production ECS Service: Current Task Definition: ${currentTaskDefinition}"
 
                     // Update the ECS service with the new task definition and image override
                     sh """
@@ -103,24 +108,22 @@ pipeline {
                                                --service ${env.SERVICE_NAME_PROD} \
                                                --force-new-deployment \
                                                --region ${env.AWS_REGION_PROD} \
-                                               --task-definition ${currentTaskDefinitionProd} \
-                                               --container-overrides '[
-                                                   {
-                                                       "name": "${env.CONTAINER_NAME}",
-                                                       "image": "${env.IMAGE_NAME}"
-                                                   }
-                                               ]'
+                                               --task-definition ${currentTaskDefinition}
                     """
                 }
             }
         }
     }
-
     post {
         success {
             script {
-                snsPublish topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment to Production environment completed with image ${env.IMAGE_NAME}."
+                withAWS(region: "${env.AWS_REGION_PROD}") {
+                def snsTopicArn = "${env.SNS_TOPIC_ARN}"
+                snsPublish topicArn: snsTopicArn, message: "Deployment to Prod environment completed with image ${env.IMAGE_NAME}."
+                //snsPublish topicArn: "${env.SNS_TOPIC_ARN}", message: "Deployment to Staging environment completed with image ${env.IMAGE_NAME}."
+            }
             }
         }
     }
+    
 }
