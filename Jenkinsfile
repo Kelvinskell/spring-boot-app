@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     def imageTag = "${env.BUILD_ID}"  
-                    def imageName = "kelvinskell/bh-spring-boot-app:${imageTag}"
+                    def imageName = "kelvinskell/bh-spring-boot-app:${imageTag}" // Change this image name to reflect your own image repository
                     env.IMAGE_NAME = imageName
                     
                     sh """
