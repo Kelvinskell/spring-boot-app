@@ -11,6 +11,9 @@ pipeline {
         SNS_EMAIL              = credentials('sns-email-address')
         CONTAINER_NAME         = "Spring-Boot-App"
     }
+    tools {
+        docker 'docker'
+    }
     
     stages {
         stage('Checkout') {
