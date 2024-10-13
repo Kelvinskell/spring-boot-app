@@ -23,7 +23,6 @@ pipeline {
         stage('Run Basic Tests') {
             steps {
                 script {
-                    sh'aws s3 ls'
                     sh 'mvn test'
                 }
             }
@@ -86,9 +85,9 @@ pipeline {
                     
                     script {
                         def tfOutput = readJSON file: "terraform/tf-output.json"
-                        env.CLUSTER_NAME_DEV = tfOutput.values.outputs.ecs_cluster_name.value
-                        env.SERVICE_NAME_DEV = tfOutput.values.outputs.ecs_service_name.value
-                        env.AWS_REGION_DEV = tfOutput.values.outputs.region
+                        env.CLUSTER_NAME_DEV = tfOutput.outputs.ecs_cluster_name.value
+                        env.SERVICE_NAME_DEV = tfOutput.outputs.ecs_service_name.value
+                        env.AWS_REGION_DEV = tfOutput.outputs.region
                     }
 
                     sh """
@@ -126,9 +125,9 @@ pipeline {
 
                     script {
                         def tfOutput = readJSON file: "terraform/tf-output.json"
-                        env.CLUSTER_NAME_STAGING = tfOutput.values.outputs.ecs_cluster_name.value
-                        env.SERVICE_NAME_STAGING = tfOutput.values.outputs.ecs_service_name.value
-                        env.AWS_REGION_STAGING = tfOutput.values.outputs.region
+                        env.CLUSTER_NAME_STAGING = tfOutput.outputs.ecs_cluster_name.value
+                        env.SERVICE_NAME_STAGING = tfOutput.outputs.ecs_service_name.value
+                        env.AWS_REGION_STAGING = tfOutput.outputs.region
                     }
 
                     sh """
@@ -167,9 +166,9 @@ pipeline {
 
                     script {
                         def tfOutput = readJSON file: "terraform/tf-output.json"
-                        env.CLUSTER_NAME_PROD = tfOutput.values.outputs.ecs_cluster_name.value
-                        env.SERVICE_NAME_PROD = tfOutput.values.outputs.ecs_service_name.value
-                        env.AWS_REGION_PROD = tfOutput.values.outputs.region
+                        env.CLUSTER_NAME_PROD = tfOutput.outputs.ecs_cluster_name.value
+                        env.SERVICE_NAME_PROD = tfOutput.outputs.ecs_service_name.value
+                        env.AWS_REGION_PROD = tfOutput.outputs.region
                     }
 
                     sh """
