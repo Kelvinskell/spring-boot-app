@@ -23,6 +23,7 @@ pipeline {
         stage('Run Basic Tests') {
             steps {
                 script {
+                    sh'aws s3 ls'
                     sh 'mvn test'
                 }
             }
