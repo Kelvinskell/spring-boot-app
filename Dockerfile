@@ -10,14 +10,14 @@ COPY pom.xml .
 # Download all dependencies.
 RUN mvn dependency:go-offline
 
-# Copy the source code into the container
-COPY . ./
-
 # Install Node.js and npm for building the frontend 
 RUN apt-get update && apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g npm@6.14.13 
+
+# Copy the source code into the container
+COPY . ./
 
 # Run frontend build
 RUN cd src/main/resources/static && npm install && npm run build

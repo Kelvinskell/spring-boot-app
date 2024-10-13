@@ -45,9 +45,6 @@ pipeline {
         stage('Scan Image with Trivy') {
             steps {
                 script {
-                //    sh """
-                //    trivy image --exit-code 1 --severity HIGH,CRITICAL ${env.IMAGE_NAME}
-                //    """
                     sh """
                     trivy image --exit-code 0 --severity HIGH,CRITICAL ${env.IMAGE_NAME}
                     """
@@ -87,20 +84,6 @@ pipeline {
                     env.CLUSTER_NAME_DEV = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
                     env.SERVICE_NAME_DEV = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
                     env.AWS_REGION_DEV = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
-                    
-                    sh """
-                     aws ecs update-service --cluster ${env.CLUSTER_NAME_DEV} \
-                                   --service ${env.SERVICE_NAME_DEV} \
-                                   --force-new-deployment \
-                                   --region ${env.AWS_REGION_DEV} \
-                                   --task-definition ${currentTaskDefinition} \
-                                   --container-overrides '[
-                                       {
-                                           "name": "${CONTAINER_NAME}",
-                                           "image": "${env.IMAGE_NAME}"
-                                       }
-                                   ]'
-                    """
                 }
             }
         }
@@ -125,19 +108,61 @@ pipeline {
                     env.CLUSTER_NAME_STAGING = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
                     env.SERVICE_NAME_STAGING = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
                     env.AWS_REGION_STAGING = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
+                }
+            }
+        }
+
+        stage('Update ECS Services') {
+            steps {
+                script {
+                    // Update ECS Service for Development Environment
+                    def currentTaskDefinitionDev = sh(script: """
+                        aws ecs describe-services --cluster ${env.CLUSTER_NAME_DEV} \
+                            --services ${env.SERVICE_NAME_DEV} \
+                            --region ${env.AWS_REGION_DEV} \
+                            --query 'services[0].taskDefinition' \
+                            --output text
+                    """, returnStdout: true).trim()
+
+                    echo "Updating Development ECS Service: Current Task Definition: ${currentTaskDefinitionDev}"
 
                     sh """
-                    aws ecs update-service --cluster ${env.CLUSTER_NAME_STAGING} \
-                                   --service ${env.SERVICE_NAME_STAGING} \
-                                   --force-new-deployment \
-                                   --region ${env.AWS_REGION_STAGING} \
-                                   --task-definition ${currentTaskDefinition} \
-                                   --container-overrides '[
-                                       {
-                                           "name": "${CONTAINER_NAME}",
-                                           "image": "${env.IMAGE_NAME}"
-                                       }
-                                   ]'
+                        aws ecs update-service --cluster ${env.CLUSTER_NAME_DEV} \
+                                               --service ${env.SERVICE_NAME_DEV} \
+                                               --force-new-deployment \
+                                               --region ${env.AWS_REGION_DEV} \
+                                               --task-definition ${currentTaskDefinitionDev} \
+                                               --container-overrides '[
+                                                   {
+                                                       "name": "${env.CONTAINER_NAME}",
+                                                       "image": "${env.IMAGE_NAME}"
+                                                   }
+                                               ]'
+                    """
+
+                    // Update ECS Service for Staging Environment
+                    def currentTaskDefinitionStaging = sh(script: """
+                        aws ecs describe-services --cluster ${env.CLUSTER_NAME_STAGING} \
+                            --services ${env.SERVICE_NAME_STAGING} \
+                            --region ${env.AWS_REGION_STAGING} \
+                            --query 'services[0].taskDefinition' \
+                            --output text
+                    """, returnStdout: true).trim()
+
+                    echo "Updating Staging ECS Service: Current Task Definition: ${currentTaskDefinitionStaging}"
+
+                    sh """
+                        aws ecs update-service --cluster ${env.CLUSTER_NAME_STAGING} \
+                                               --service ${env.SERVICE_NAME_STAGING} \
+                                               --force-new-deployment \
+                                               --region ${env.AWS_REGION_STAGING} \
+                                               --task-definition ${currentTaskDefinitionStaging} \
+                                               --container-overrides '[
+                                                   {
+                                                       "name": "${env.CONTAINER_NAME}",
+                                                       "image": "${env.IMAGE_NAME}"
+                                                   }
+                                               ]'
                     """
                 }
             }
@@ -164,19 +189,37 @@ pipeline {
                     env.CLUSTER_NAME_PROD = sh(script: 'terraform output -raw ecs_cluster_name', returnStdout: true).trim()
                     env.SERVICE_NAME_PROD = sh(script: 'terraform output -raw ecs_service_name', returnStdout: true).trim()
                     env.AWS_REGION_PROD = sh(script: 'terraform output -raw aws_region', returnStdout: true).trim()
+                }
+            }
+        }
 
+        stage('Update ECS Service For Prod Environment') {
+            steps {
+                script {
+                    // Get the current task definition ARN for the service
+                    def currentTaskDefinitionProd = sh(script: """
+                        aws ecs describe-services --cluster ${env.CLUSTER_NAME_PROD} \
+                            --services ${env.SERVICE_NAME_PROD} \
+                            --region ${env.AWS_REGION_PROD} \
+                            --query 'services[0].taskDefinition' \
+                            --output text
+                    """, returnStdout: true).trim()
+
+                    echo "Updating Production ECS Service: Current Task Definition: ${currentTaskDefinitionProd}"
+
+                    // Update the ECS service with the new task definition and image override
                     sh """
-                     aws ecs update-service --cluster ${env.CLUSTER_NAME_PROD} \
-                                   --service ${env.SERVICE_NAME_PROD} \
-                                   --force-new-deployment \
-                                   --region ${env.AWS_REGION_PROD} \
-                                   --task-definition ${currentTaskDefinition} \
-                                   --container-overrides '[
-                                       {
-                                           "name": "${CONTAINER_NAME}",
-                                           "image": "${env.IMAGE_NAME}"
-                                       }
-                                   ]'
+                        aws ecs update-service --cluster ${env.CLUSTER_NAME_PROD} \
+                                               --service ${env.SERVICE_NAME_PROD} \
+                                               --force-new-deployment \
+                                               --region ${env.AWS_REGION_PROD} \
+                                               --task-definition ${currentTaskDefinitionProd} \
+                                               --container-overrides '[
+                                                   {
+                                                       "name": "${env.CONTAINER_NAME}",
+                                                       "image": "${env.IMAGE_NAME}"
+                                                   }
+                                               ]'
                     """
                 }
             }
