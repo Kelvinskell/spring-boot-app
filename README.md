@@ -1,7 +1,3 @@
-Here’s your comprehensive documentation converted into **Markdown (MD) format** for a GitHub README:
-
----
-
 # Spring Boot-React App Deployment and Infrastructure Setup
 
 ## Table of Contents
@@ -17,8 +13,9 @@ Here’s your comprehensive documentation converted into **Markdown (MD) format*
    - [Terraform Providers](#terraform-providers)
    - [Challenges](#challenges)
 5. [Instructions to Fork, Configure, and Deploy](#instructions-to-fork-configure-and-deploy)
-6. [Instructions to Tear Down the Infrastructure](#instructions-to-tear-down-the-infrastructure)
-7. [Conclusion](#conclusion)
+6. [Testing the Application](#testing-the-application)
+7. [Instructions to Tear Down the Infrastructure](#instructions-to-tear-down-the-infrastructure)
+8. [Conclusion](#conclusion)
 
 ---
 
@@ -73,33 +70,33 @@ Additionally, an **AWS Lambda** function is triggered to initialize the database
 
 ## CI/CD Pipeline with Jenkins
 
-We implemented a **Jenkins-based CI/CD pipeline** to automate the build, test, and deployment process for each environment: **dev**, **staging**, and **prod**.
+I implemented a **Jenkins-based CI/CD pipeline** to automate the build, test, and deployment process for each environment: **dev**, **staging**, and **prod**.
 
 ### Key Features
 
 1. **Separate Pipelines for Each Environment**:  
-   We created individual Jenkins pipelines (`Jenkinsfile.dev`, `Jenkinsfile.staging`, and `Jenkinsfile.prod`) to manage and maintain each environment separately.
+   I created individual Jenkins pipelines (`Jenkinsfile.dev`, `Jenkinsfile.staging`, and `Jenkinsfile.prod`) to manage and maintain each environment separately.
 
 2. **Stages in Each Pipeline**:
-   - **Checkout Code**: Pulls the latest code from the repository.
-   - **Run Tests**: Runs basic unit tests using Maven.
-   - **Build Docker Image**: Packages the application as a Docker image.
-   - **Security Scan**: Scans the Docker image for vulnerabilities using **Trivy**.
-   - **Push to DockerHub**: Pushes the Docker image to DockerHub.
-   - **Deploy with Terraform**: Provisions infrastructure and deploys the application to ECS.
-   - **Update ECS Service**: Updates the ECS service with the new image and task definition.
+   - **Checkout Code**: Jenkins pulls the latest code from the repository.
+   - **Run Tests**: Basic unit tests are executed using Maven.
+   - **Build Docker Image**: The application is packaged into a Docker image.
+   - **Security Scan**: Docker images are scanned for vulnerabilities using **Trivy**.
+   - **Push to DockerHub**: The Docker image is pushed to DockerHub.
+   - **Deploy with Terraform**: The application is deployed to ECS using Terraform, which provisions the necessary infrastructure.
+   - **Update ECS Service**: The ECS service is updated with the new image and task definition.
 
 3. **Manual Approval for Production**:  
    The **prod pipeline** requires manual approval before deployment to ensure sensitive changes are reviewed.
 
 4. **Dynamic Build Agents**:  
-   To optimize Jenkins, we recommend using **dynamic build agents** with **AWS Auto Scaling Groups**. This allows Jenkins to scale its agents dynamically based on load, ensuring efficient resource utilization. Detailed instructions can be found in this [article](https://practicalcloud.net/how-to-configure-dynamic-build-agents-in-jenkins-using-aws-and-terraform/).
+   To optimize Jenkins, I recommend using **dynamic build agents** with **AWS Auto Scaling Groups**. This allows Jenkins to scale its agents dynamically based on load, ensuring efficient resource utilization. Detailed instructions can be found in this [article](https://practicalcloud.net/how-to-configure-dynamic-build-agents-in-jenkins-using-aws-and-terraform/).
 
 ---
 
 ## Infrastructure as Code (IaC) with Terraform
 
-We utilized **Terraform** to manage the cloud infrastructure, following Terraform best practices to ensure modularity, maintainability, and scalability.
+I utilized **Terraform** to manage the cloud infrastructure, following Terraform best practices to ensure modularity, maintainability, and scalability.
 
 ### Workspaces and Modules
 
@@ -175,17 +172,34 @@ We utilized **Terraform** to manage the cloud infrastructure, following Terrafor
      ```hcl
      backend "s3" {
        bucket = "<your-bucket-name>"
-       dynamodb_table = "<your-dynamodb-table>"
+       dynamodb_table =
+
+ "<your-dynamodb-table>"
      }
      ```
 
 ---
 
+## Testing the Application
+
+Once the application is deployed, you can test it in two ways:
+
+1. **Using CURL to Test the API**:
+   - You can test the Spring Boot REST API by running the following `curl` command:
+     ```bash
+     curl -v -u greg:turnquist http://<ALB-DNS-NAME>/api/employees/3
+     ```
+     This command fetches the employee details from the API.
+
+2. **Accessing the Frontend**:
+   - The **ALB DNS name** is output by Terraform after the deployment is completed. You can visit the DNS name in your browser to access the frontend.
+   - The frontend will display a **login page**. Use the credentials `greg:turnquist` to log in and access the application.
+
+---
+
 ## Instructions to Tear Down the Infrastructure
 
-1. **Navigate to the Terraform Directory**
-
-.
+1. **Navigate to the Terraform Directory**.
 
 2. **Switch to the Appropriate Workspace**:
    ```bash
