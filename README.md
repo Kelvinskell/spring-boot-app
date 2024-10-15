@@ -31,6 +31,7 @@ This guide provides a comprehensive overview of deploying a Spring Boot backend 
 # CI/CD Pipeline Architecture
 
 ![Architectural diagram](./images/cicd_pipeline.png)
+![Architectural diagram 2](./images/cicd_pipeline2.png)
 
 ### Single Container Application
 
