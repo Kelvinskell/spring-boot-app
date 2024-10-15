@@ -90,7 +90,7 @@ I implemented a **Jenkins-based CI/CD pipeline** to automate the build, test, an
    The **prod pipeline** requires manual approval before deployment to ensure sensitive changes are reviewed.
 
 4. **Dynamic Build Agents**:  
-   To optimize Jenkins, I recommend using **dynamic build agents** with **AWS Auto Scaling Groups**. This allows Jenkins to scale its agents dynamically based on load, ensuring efficient resource utilization. Detailed instructions can be found in this [article](https://practicalcloud.net/how-to-configure-dynamic-build-agents-in-jenkins-using-aws-and-terraform/).
+   To optimize Jenkins, I recommend using **dynamic build agents** with **AWS Auto Scaling Groups**. This allows Jenkins to scale its agents dynamically based on load, ensuring efficient resource utilization. I have previously written about this and detailed instructions can be found in this [article](https://practicalcloud.net/how-to-configure-dynamic-build-agents-in-jenkins-using-aws-and-terraform/).
 
 ---
 
@@ -173,8 +173,7 @@ I utilized **Terraform** to manage the cloud infrastructure, following Terraform
      backend "s3" {
        bucket = "<your-bucket-name>"
        dynamodb_table =
-
- "<your-dynamodb-table>"
+     "<your-dynamodb-table>"
      }
      ```
 
@@ -221,4 +220,5 @@ By following this guide, you can efficiently deploy and manage a Spring Boot and
 ---
 
 Connect with me on [LinkedIn](https://www.linkedin.com/in/kelvin-onuchukwu-3460871a1?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3ByiGHZNnXReayzc9G2WjJ9w%3D%3D)
+
 Follow and Subscribe to my blog [Practical Cloud](https://practicalcloud.net)
