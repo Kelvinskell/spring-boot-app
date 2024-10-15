@@ -1,1 +1,4 @@
 terraform/*
+jenkins-user-data-script.sh
+LICENSE
+README.md
