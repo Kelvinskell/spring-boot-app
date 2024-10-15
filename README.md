@@ -10,6 +10,8 @@
 3. [CI/CD Pipeline with Jenkins](#ci-cd-pipeline-with-jenkins)
 4. [Infrastructure as Code (IaC) with Terraform](#infrastructure-as-code-iac-with-terraform)
    - [Workspaces and Modules](#workspaces-and-modules)
+   - [Resource Grouping](#resource-grouping)
+   - [Monitoring and Alarms](#monitoring-and-alarms)
    - [Terraform Providers](#terraform-providers)
    - [Challenges](#challenges)
 5. [Instructions to Fork, Configure, and Deploy](#instructions-to-fork-configure-and-deploy)
@@ -113,6 +115,24 @@ I utilized **Terraform** to manage the cloud infrastructure, following Terraform
    - **ECS Auto-scaling**: Configures ECS service auto-scaling.
    - **Monitoring**: Sets up CloudWatch alarms, SNS topics, and dashboards.
 
+### Resource Grouping
+
+All resources provisioned by Terraform are organized into **resource groups** to simplify access management. This approach allows easier administration and the ability to control access based on user roles or groups.
+
+### Monitoring and Alarms
+
+- **CloudWatch Metrics and Alarms**:  
+  The **Monitoring Module** provisions key CloudWatch metrics and alarms that monitor application performance and infrastructure health. Alarms are set for critical resource utilization such as CPU, memory, and error rates.
+
+- **CloudWatch EventBridge Rules**:  
+  EventBridge rules trigger alerts based on application state changes or failures. These are linked to SNS topics to notify the team.
+
+- **SNS Topics for Alerts**:  
+  The **Simple Notification Service (SNS)** is used to deliver alerts triggered by alarms or event rules. This ensures timely notifications of any issues.
+
+- **CloudWatch Dashboard**:  
+  A custom CloudWatch dashboard provides a real-time overview of all key metrics, allowing for easy monitoring and troubleshooting.
+
 ### Terraform Providers
 
 - **Remote State Management**:
@@ -157,7 +177,9 @@ I utilized **Terraform** to manage the cloud infrastructure, following Terraform
      - Pipeline Utility Steps
 
 5. **Add Credentials in Jenkins**:
-   - Navigate to `Jenkins > Manage Jenkins > Manage Credentials` and add the following credentials:
+   - Navigate to `Jenkins > Manage Jenkins > Manage Credentials` and add
+
+ the following credentials:
      - `aws-access-key-id`, `aws-secret-access-key`, `sns-email-address`, `db-username-dev`, `db-password-dev`, `db-username-staging`, `db-password-staging`, `db-username-prod`, and `db-password-prod`.
    - Add DockerHub credentials with the ID **docker**.
 
@@ -172,8 +194,7 @@ I utilized **Terraform** to manage the cloud infrastructure, following Terraform
      ```hcl
      backend "s3" {
        bucket = "<your-bucket-name>"
-       dynamodb_table =
-     "<your-dynamodb-table>"
+       dynamodb_table = "<your-dynamodb-table>"
      }
      ```
 
