@@ -30,17 +30,8 @@ This guide provides a comprehensive overview of deploying a Spring Boot backend 
 ## Architecture Overview
 # CI/CD Pipeline Architecture
 
-```mermaid
-graph TD
-    GitHub[GitHub Repo] --> Jenkins[Jenkins]
-    Jenkins --> Maven[Maven Build]
-    Maven --> Trivy[Trivy Scan]
-    Trivy --> DockerBuild[Docker Build]
-    DockerBuild --> DockerHub[DockerHub]
-    DockerHub --> Terraform[Terraform Apply]
-    Terraform --> ECS[ECS Tasks]
-    ECS --> RDS[RDS MySQL]
-    ECS --> CloudWatch[CloudWatch Monitoring]
+```
+![Architectural diagram](./cicd_pipeline.png)
 ```
 
 ### Single Container Application
