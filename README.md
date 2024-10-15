@@ -180,8 +180,8 @@ All resources provisioned by Terraform are organized into **resource groups** to
    - Navigate to `Jenkins > Manage Jenkins > Manage Credentials` and add
 
  the following credentials:
-     - `aws-access-key-id`, `aws-secret-access-key`, `sns-email-address`, `db-username-dev`, `db-password-dev`, `db-username-staging`, `db-password-staging`, `db-username-prod`, and `db-password-prod`.
-   - Add DockerHub credentials with the ID **docker**.
+     - `aws-access-key-id`, `aws-secret-access-key`, `sns-email-address`, `db-username-dev`, `db-password-dev`, `db-username-staging`, `db-password-staging`, `db-username-prod`, and `db-password-prod`. The credentials should be of type **Secret text**. Make sure that you set the credential IDs exactly as is written here.
+   - Add DockerHub credentials with the ID **docker**. This should be of type **Username/Password**.
 
 6. **Configure Docker Registry**:
    - Go to `Jenkins > Manage Jenkins > System > Declarative Pipeline (Docker)` and configure DockerHub registry credentials.
