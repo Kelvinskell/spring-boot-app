@@ -162,7 +162,7 @@ All resources provisioned by Terraform are organized into **resource groups** to
 
 2. **Create an Ubuntu EC2 Instance**:
    - Launch an Ubuntu EC2 instance with a **minimum 30GB EBS volume** to act as the Jenkins controller.
-   - Attach the **user data script** to install necessary tools such as Terraform, Docker, Maven, AWS CLI, and Trivy.
+   - Attach the **user data script (jenkins-user-data-script.sh)** to install necessary tools such as Terraform, Docker, Maven, AWS CLI, and Trivy.
 
 3. **Access Jenkins**:
    - Once the EC2 instance is running, connect to Jenkins on port **8080**.
