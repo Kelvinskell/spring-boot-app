@@ -17,6 +17,9 @@ echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main |
 apt-get update
 apt-get install trivy -y
 
+# Install Maven 
+apt install maven -y
+
 # Install Docker
 apt-get update -y
 apt install -y apt-transport-https ca-certificates curl software-properties-common
