@@ -248,4 +248,4 @@ By following this guide, you can efficiently deploy and manage a Spring Boot and
 
 Connect with me on [LinkedIn](https://www.linkedin.com/in/kelvin-onuchukwu-3460871a1?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3ByiGHZNnXReayzc9G2WjJ9w%3D%3D)
 
-Follow and Subscribe to my blog [Practical Cloud](https://practicalcloud.net)
+Follow and Subscribe to my blog [Practical Cloud](https://practicalcloud.net/deploy-production-ready-apps-on-amazon-ecs-a-complete-guide/)
